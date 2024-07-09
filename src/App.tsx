@@ -2,14 +2,17 @@ import { useCallback, useState } from "react";
 import { DragDropContext, DropResult } from "react-beautiful-dnd";
 
 import DragDropList from "@/components/DragDropList";
+import { Button } from "@/components/ui/button";
 import { Item } from "@/lib/types";
 
 const App = () => {
   const [items, setItems] = useState<Item[]>(
-    Array(10).fill(0).map((_, index) => ({
-      id: `Item ${index}`,
-      boxId: "Box 1"
-    }))
+    Array(10)
+      .fill(0)
+      .map((_, index) => ({
+        id: `Item ${index}`,
+        boxId: "Box 1",
+      }))
   );
 
   const moveItem = (id: string, boxId: string) => {
@@ -18,14 +21,14 @@ const App = () => {
         if (item.id === id) {
           return {
             ...item,
-            boxId: boxId
+            boxId: boxId,
           };
         } else {
           return item;
         }
-      })
-    })
-  }
+      });
+    });
+  };
 
   const onDragEnd = useCallback((result: DropResult) => {
     if (result.destination) {
@@ -33,16 +36,31 @@ const App = () => {
     }
   }, []);
 
+  const onReset = useCallback(() => {
+    setItems(
+      Array(10)
+        .fill(0)
+        .map((_, index) => ({
+          id: `Item ${index}`,
+          boxId: "Box 1",
+        }))
+    );
+  }, []);
+
   return (
-    <DragDropContext onDragEnd={onDragEnd}>
-      <div className="tw-flex tw-gap-4">
-      {
-        Array(5).fill(0).map((_, index) => (
-          <DragDropList id={`Box ${index + 1}`} items={items}/>
-        ))
-      }
-      </div>
-    </DragDropContext>
+    <div className="tw-flex tw-flex-col tw-gap-4 tw-p-4 tw-items-center">
+      <DragDropContext onDragEnd={onDragEnd}>
+        <div className="tw-flex tw-gap-4">
+          {Array(5)
+            .fill(0)
+            .map((_, index) => (
+              <DragDropList id={`Box ${index + 1}`} items={items} />
+            ))}
+        </div>
+      </DragDropContext>
+
+      <Button className="tw-w-fit" onClick={onReset}>Reset</Button>
+    </div>
   );
 };
 
